@@ -13,7 +13,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testPHPError() {
-		\Asgard\Debug\ErrorHandler::initialize();
+		\Asgard\Debug\ErrorHandler::register();
 		$this->setExpectedException('ErrorException');
 
 		$a = $b;
@@ -46,7 +46,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testExceptionHandler() {
-		$errorHandler = new \Asgard\Debug\ErrorHandler();
+		$errorHandler = new \Asgard\Debug\ErrorHandler;
 
 		set_error_handler([$errorHandler, 'phpErrorHandler']);
 		try {
@@ -56,6 +56,13 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase {
 			$errorHandler->exceptionHandler($e, false);
 		}
 		$this->hasOutput();
+	}
+
+	public function testIgnoreDir() {
+		$errorHandler = new \Asgard\Debug\ErrorHandler;
+		$errorHandler->ignoreDir(__DIR__.'/fixtures');
+		set_error_handler([$errorHandler, 'phpErrorHandler']);
+		include __DIR__.'/fixtures/error.php';
 	}
 
 	public function checkLog($a) {
